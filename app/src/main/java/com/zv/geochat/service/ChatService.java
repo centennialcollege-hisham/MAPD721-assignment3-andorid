@@ -13,8 +13,12 @@ import android.util.Log;
 
 import com.zv.geochat.Constants;
 import com.zv.geochat.model.ChatMessage;
+import com.zv.geochat.notification.MyNotificationManager;
 import com.zv.geochat.notification.NotificationDecorator;
 import com.zv.geochat.provider.ChatMessageStore;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ChatService extends Service {
     private static final String TAG = "ChatService";
@@ -31,6 +35,9 @@ public class ChatService extends Service {
     private NotificationDecorator notificationDecorator;
     private ChatMessageStore chatMessageStore;
 
+    private MyNotificationManager notificationManager;
+
+
     private String myName;
 
     public ChatService() {
@@ -42,6 +49,8 @@ public class ChatService extends Service {
         super.onCreate();
         notificationMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationDecorator = new NotificationDecorator(this, notificationMgr);
+        notificationManager = new MyNotificationManager(this);
+
         chatMessageStore = new ChatMessageStore(this);
         loadUserNameFromPreferences();
 
@@ -90,26 +99,28 @@ public class ChatService extends Service {
 
 
     private void handleData(Bundle data) {
+        String date = new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
+
         int command = data.getInt(CMD);
         Log.d(TAG, "-(<- received command data to service: command=" + command);
         if (command == CMD_JOIN_CHAT) {
-            notificationDecorator.displaySimpleNotification("Joining Chat...", "Connecting as User: " + myName);
+            notificationManager.displayCustomNotification("Joining Chat...", "Connecting as User: " + myName, myName, date);
             sendBroadcastConnected();
             sendBroadcastUserJoined(myName, 1);
         } else if (command == CMD_LEAVE_CHAT) {
-            notificationDecorator.displaySimpleNotification("Leaving Chat...", "Disconnecting");
+            notificationManager.displayCustomNotification("Leaving Chat...", "Disconnecting", myName, date);
             sendBroadcastUserLeft(myName, 0);
             sendBroadcastNotConnected();
             stopSelf();
         } else if (command == CMD_SEND_MESSAGE) {
             String messageText = (String) data.get(KEY_MESSAGE_TEXT);
-            notificationDecorator.displayExpandableNotification("Sending message...", messageText);
+            notificationManager.displayCustomNotification("Sending message...", messageText, myName, date);
             chatMessageStore.insert(new ChatMessage(myName, messageText));
             sendBroadcastNewMessage(myName, messageText);
         } else if (command == CMD_RECEIVE_MESSAGE) {
             String testUser = "Test User";
             String testMessage = "Simulated Message";
-            notificationDecorator.displayExpandableNotification("New message...: "+ testUser, testMessage);
+            notificationManager.displayCustomNotification("New message...: " + testUser, testMessage, myName, date);
             chatMessageStore.insert(new ChatMessage(testUser, testMessage));
             sendBroadcastNewMessage(testUser, testMessage);
         } else {
