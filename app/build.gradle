@@ -1,4 +1,10 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
+}
+
 
 android {
     compileSdk 33
@@ -16,6 +22,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -26,12 +40,19 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'co.dift.ui.swipetoaction:library:1.1'
-    implementation 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation ('io.socket:socket.io-client:0.8.1') {
         exclude group: 'org.json', module: 'json'
     }
 
+
+
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.maps.android:android-maps-utils:2.2.0'
+
+
+
+
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 }

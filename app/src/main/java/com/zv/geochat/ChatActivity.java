@@ -5,13 +5,16 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.zv.geochat.fragment.MapActivity;
 import com.zv.geochat.service.ChatService;
 
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,24 +44,25 @@ public class ChatActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.action_history){
+        } else if (id == R.id.action_history) {
             Intent intent = new Intent(getApplicationContext(), HistoryActivity.class);
             startActivity(intent);
             return true;
-        } else if (id == R.id.action_leave){
+        } else if (id == R.id.action_leave) {
             leaveChat();
             finish(); // return to login screen
             return true;
-        } else if (id == R.id.action_map){
-            // TODO: open Map screen
+        } else if (id == R.id.action_map) {
+            startActivity(new Intent(this, MapActivity.class));
+
             return true;
-        } else if (id == R.id.action_join_test){ // test only
+        } else if (id == R.id.action_join_test) { // test only
             joinChat();
             return true;
-        } else if (id == R.id.action_receive_message_test){ // test only
+        } else if (id == R.id.action_receive_message_test) { // test only
             simulateOnMessage();
             return true;
-        } else if (id == R.id.action_leave_test){ // test only
+        } else if (id == R.id.action_leave_test) { // test only
             leaveChat();
             return true;
         }
@@ -66,7 +70,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private void joinChat(){
+    private void joinChat() {
         Bundle data = new Bundle();
         data.putInt(ChatService.CMD, ChatService.CMD_JOIN_CHAT);
         Intent intent = new Intent(this, ChatService.class);
@@ -75,7 +79,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    private void leaveChat(){
+    private void leaveChat() {
         Bundle data = new Bundle();
         data.putInt(ChatService.CMD, ChatService.CMD_LEAVE_CHAT);
         Intent intent = new Intent(this, ChatService.class);
@@ -83,7 +87,7 @@ public class ChatActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private void sendMessage(String messageText){
+    private void sendMessage(String messageText) {
         Bundle data = new Bundle();
         data.putInt(ChatService.CMD, ChatService.CMD_SEND_MESSAGE);
         data.putString(ChatService.KEY_MESSAGE_TEXT, messageText);
@@ -92,14 +96,13 @@ public class ChatActivity extends AppCompatActivity {
         startService(intent);
     }
 
-    private void simulateOnMessage(){
+    private void simulateOnMessage() {
         Bundle data = new Bundle();
         data.putInt(ChatService.CMD, ChatService.CMD_RECEIVE_MESSAGE);
         Intent intent = new Intent(this, ChatService.class);
         intent.putExtras(data);
         startService(intent);
     }
-
 
 
 }

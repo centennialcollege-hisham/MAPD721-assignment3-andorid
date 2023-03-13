@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/milestons-android.iml" filepath="$PROJECT_DIR$/.idea/modules/milestons-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/milestons-android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/milestons-android.app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/milestons-android.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/milestons-android.app.androidTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/milestons-android.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/milestons-android.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/milestons-android.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/milestons-android.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HishamAbuSanimeh_m5.iml" filepath="$PROJECT_DIR$/.idea/modules/HishamAbuSanimeh_m5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HishamAbuSanimeh_m5.app.unitTest.iml" />
     </modules>
   </component>
 </project>

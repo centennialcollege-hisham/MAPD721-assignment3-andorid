@@ -28,5 +28,8 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="action_map">Map</string>
     <string name="action_leave">Leave Chat</string>
+    <string name="location_permission_denied">permission denied</string>
+    <string name="permission_required_toast">permission required</string>
+    <string name="permission_rationale_location">permission retation</string>
 
 </resources>
