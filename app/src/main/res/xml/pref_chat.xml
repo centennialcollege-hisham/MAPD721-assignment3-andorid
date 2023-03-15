@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Chat Setting">
+        <ListPreference
+            android:title="Chat Limit Messages"
+            android:key="key_chat_limit"
+            android:defaultValue="5"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

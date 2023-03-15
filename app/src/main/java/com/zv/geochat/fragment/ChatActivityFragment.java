@@ -5,15 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.zv.geochat.Constants;
 import com.zv.geochat.R;
@@ -28,7 +37,10 @@ public class ChatActivityFragment extends Fragment {
     private EditText edtMessage;
     private ListView messageListView;
     private ChatBubbleAdapter adapter;
-
+    private LinearLayout layoutSessionClosed;
+    private TableLayout tableLayout;
+    private TextView textMessageClosed;
+    private Button btnClosed;
 
     public ChatActivityFragment() {
     }
@@ -49,7 +61,15 @@ public class ChatActivityFragment extends Fragment {
         });
 
         edtMessage = (EditText) v.findViewById(R.id.edtMessage);
-        messageListView = (ListView)v.findViewById(R.id.messageList);
+        messageListView = (ListView) v.findViewById(R.id.messageList);
+        layoutSessionClosed = (LinearLayout) v.findViewById(R.id.layout_session_closed);
+        tableLayout = (TableLayout) v.findViewById(R.id.tableLayout);
+        textMessageClosed = (TextView) v.findViewById(R.id.text_view_message);
+        btnClosed = (Button) v.findViewById(R.id.button_close);
+
+        btnClosed.setOnClickListener(view -> {
+            getActivity().finish();
+        });
         adapter = new ChatBubbleAdapter(getActivity(), new ArrayList<ChatMessage>());
         messageListView.setAdapter(adapter);
         return v;
@@ -67,7 +87,7 @@ public class ChatActivityFragment extends Fragment {
         getActivity().unregisterReceiver(mServiceStateChangeReceiver);
     }
 
-    private void sendMessage(String messageText){
+    private void sendMessage(String messageText) {
         Bundle data = new Bundle();
         data.putInt(ChatService.CMD, ChatService.CMD_SEND_MESSAGE);
         data.putString(ChatService.KEY_MESSAGE_TEXT, messageText);
@@ -85,7 +105,6 @@ public class ChatActivityFragment extends Fragment {
     private void scroll() {
         messageListView.setSelection(messageListView.getCount() - 1);
     }
-
 
 
     //------- listening broadcasts from service
@@ -110,12 +129,12 @@ public class ChatActivityFragment extends Fragment {
             } else if (Constants.BROADCAST_USER_JOINED.equals(action)) {
                 String userName = data.getString(Constants.CHAT_USER_NAME);
                 int userCount = data.getInt(Constants.CHAT_USER_COUNT, 0);
-                ChatMessage chatMessage = new ChatMessage(userName, " joined. Users: "+userCount, true);
+                ChatMessage chatMessage = new ChatMessage(userName, " joined. Users: " + userCount, true);
                 displayMessage(chatMessage);
             } else if (Constants.BROADCAST_USER_LEFT.equals(action)) {
                 String userName = data.getString(Constants.CHAT_USER_NAME);
                 int userCount = data.getInt(Constants.CHAT_USER_COUNT, 0);
-                ChatMessage chatMessage = new ChatMessage(userName, " left. Users: "+userCount, true);
+                ChatMessage chatMessage = new ChatMessage(userName, " left. Users: " + userCount, true);
                 displayMessage(chatMessage);
             } else if (Constants.BROADCAST_NEW_MESSAGE.equals(action)) {
                 String userName = data.getString(Constants.CHAT_USER_NAME);
@@ -124,6 +143,15 @@ public class ChatActivityFragment extends Fragment {
                 displayMessage(chatMessage);
             } else if (Constants.BROADCAST_USER_TYPING.equals(action)) {
                 // TODO
+            } else if (Constants.BROADCAST_CHAT_MESSAGE_LIMIT.equals(action)) {
+                String userName = data.getString(Constants.CHAT_USER_NAME);
+                String message = data.getString(Constants.CHAT_MESSAGE);
+                textMessageClosed.setText(message);
+                tableLayout.setVisibility(View.GONE);
+                layoutSessionClosed.setVisibility(View.VISIBLE);
+                ChatMessage chatMessage = new ChatMessage(userName, message);
+                displayMessage(chatMessage);
+
             } else {
                 Log.v(TAG, "do nothing for action: " + action);
             }
@@ -140,6 +168,13 @@ public class ChatActivityFragment extends Fragment {
         intentFilter.addAction(Constants.BROADCAST_SERVER_NOT_CONNECTED);
         intentFilter.addAction(Constants.BROADCAST_USER_JOINED);
         intentFilter.addAction(Constants.BROADCAST_USER_LEFT);
+        intentFilter.addAction(Constants.BROADCAST_CHAT_MESSAGE_LIMIT);
         getActivity().registerReceiver(mServiceStateChangeReceiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ChatService.sessionMessageLimit = 0;
     }
 }

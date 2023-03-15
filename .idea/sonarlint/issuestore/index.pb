@@ -11,8 +11,6 @@ o
 ?app/src/main/java/com/zv/geochat/adapter/ChatBubbleAdapter.java,1/9/19dd0ce3a46883edf5ad7271252d411987ebe5b6
 x
 Happ/src/main/java/com/zv/geochat/notification/MessageNotifierConfig.java,6/3/63d925a6e78381e9036d2cec2ecebcc168bf9db8
-i
-9app/src/main/java/com/zv/geochat/service/ChatService.java,9/0/9029c061bba84003a0e2dcd83a640bfb699fedfa
 x
 Happ/src/main/java/com/zv/geochat/notification/NotificationDecorator.java,1/6/16632db012714af2a5a402fecf540e0e0e78f677
 x

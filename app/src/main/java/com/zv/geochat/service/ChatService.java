@@ -36,9 +36,11 @@ public class ChatService extends Service {
     private ChatMessageStore chatMessageStore;
 
     private MyNotificationManager notificationManager;
-
+    private SharedPreferences prefs;
 
     private String myName;
+
+    public static int sessionMessageLimit = 0;
 
     public ChatService() {
     }
@@ -50,6 +52,7 @@ public class ChatService extends Service {
         notificationMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationDecorator = new NotificationDecorator(this, notificationMgr);
         notificationManager = new MyNotificationManager(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         chatMessageStore = new ChatMessageStore(this);
         loadUserNameFromPreferences();
@@ -104,19 +107,26 @@ public class ChatService extends Service {
         int command = data.getInt(CMD);
         Log.d(TAG, "-(<- received command data to service: command=" + command);
         if (command == CMD_JOIN_CHAT) {
+            sessionMessageLimit = 0;
             notificationManager.displayCustomNotification("Joining Chat...", "Connecting as User: " + myName, myName, date);
             sendBroadcastConnected();
             sendBroadcastUserJoined(myName, 1);
         } else if (command == CMD_LEAVE_CHAT) {
+            sessionMessageLimit = 0;
             notificationManager.displayCustomNotification("Leaving Chat...", "Disconnecting", myName, date);
             sendBroadcastUserLeft(myName, 0);
             sendBroadcastNotConnected();
             stopSelf();
         } else if (command == CMD_SEND_MESSAGE) {
+            sessionMessageLimit += 1;
+            getChatLimitPreferences();
             String messageText = (String) data.get(KEY_MESSAGE_TEXT);
             notificationManager.displayCustomNotification("Sending message...", messageText, myName, date);
             chatMessageStore.insert(new ChatMessage(myName, messageText));
             sendBroadcastNewMessage(myName, messageText);
+            if (sessionMessageLimit >= getChatLimitPreferences()) {
+                sendBroadcastMessageLimit(myName, getChatLimitPreferences());
+            }
         } else if (command == CMD_RECEIVE_MESSAGE) {
             String testUser = "Test User";
             String testMessage = "Simulated Message";
@@ -189,10 +199,28 @@ public class ChatService extends Service {
         sendBroadcast(intent);
     }
 
+    private void sendBroadcastMessageLimit(String userName, int limit) {
+        Log.d(TAG, "->(+)<- sending broadcast: BROADCAST_NEW_MESSAGE");
+        Intent intent = new Intent();
+        intent.setAction(Constants.BROADCAST_CHAT_MESSAGE_LIMIT);
+        Bundle data = new Bundle();
+        String message = "Session closed after reaching the limit:\n" + limit + " messages maximum";
+        data.putString(Constants.CHAT_MESSAGE, message);
+        data.putString(Constants.CHAT_USER_NAME, userName);
+        intent.putExtras(data);
+        notificationManager.displayCustomNotification(message, "", "", "");
+
+        sendBroadcast(intent);
+    }
+
     private void sendBroadcastUserTyping(String userName) {
         Log.d(TAG, "->(+)<- sending broadcast: BROADCAST_USER_TYPING");
         Intent intent = new Intent();
         intent.setAction(Constants.BROADCAST_USER_TYPING);
         sendBroadcast(intent);
+    }
+
+    private Integer getChatLimitPreferences() {
+        return Integer.parseInt(prefs.getString(Constants.PREF_KEY_CHAT_LIMIT, "5"));
     }
 }
